@@ -39,7 +39,7 @@ public IActionResult Get()
 }
 ```
 
-### Using Options
+### Using Options - Style 1
 ```
 [HttpGet]
 public IActionResult Get()
@@ -57,5 +57,27 @@ public IActionResult Get()
         options.ContentType = "application\ms-excel";
         options.FileDownloadName = "library-books.tab"
     });
+}
+```
+
+### Using Options - Style 2
+```
+[HttpGet]
+public IActionResult Get()
+{
+    var book1 = new Book() { Title = "The Mythical Man Month", PageCount = 322 };
+    var book2 = new Book() { Title = "What it is to be a \"coder\"", PageCount = 0 };
+    var books = new List<Book> { book1, book2 };
+
+    var options = new EnumerableExtension.Options()
+    {
+        Delimiter = ",",
+        EndOfLine = "\r\n",
+        FileDownloadName = "library.csv",
+        UsePropertyNamesAsHeaders = true,
+        UseQuotedIdentifiers = true
+    };
+
+    return books.ToFileStreamResult(options);
 }
 ```
