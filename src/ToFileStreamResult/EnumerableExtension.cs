@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ToFileStreamResult
 {
@@ -69,8 +69,6 @@ namespace ToFileStreamResult
                 foreach (var propertyInfo in propertiesOfT)
                 {
                     var itemValue = propertyInfo.GetValue(item).ToString();
-
-                    //if (options.UseQuotedIdentifiers) itemValue = '"' + itemValue.Replace("\"", "\"\"") + '"';
                     if (options.UseQuotedIdentifiers) itemValue = $"\"{itemValue.Replace("\"", "\"\"")}\"";
 
                     memoryStream.Write(Encoding.UTF8.GetBytes(itemValue));
@@ -92,11 +90,11 @@ namespace ToFileStreamResult
                 FileDownloadName = ""
             };
 
-            public string ContentType { get; set; }
-            public string Delimiter { get; set; }
-            public string FileDownloadName { get; set; }
+            public string ContentType { get; set; } = "";
+            public string Delimiter { get; set; } = "";
+            public string FileDownloadName { get; set; } = "";
             public bool UsePropertyNamesAsHeaders { get; set; }
-            public string EndOfLine { get; set; }
+            public string EndOfLine { get; set; } = "";
             public bool UseQuotedIdentifiers { get; set; }
         }
     }

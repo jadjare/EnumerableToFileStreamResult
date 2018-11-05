@@ -234,5 +234,17 @@ namespace ToFileStreamResultTests
             Assert.AreEqual(expectedPageCount2, actualLineData2.Last());
         }
 
+
+        [TestMethod]
+        public void Given_OptionsInstance_When_ToFileStreamResultIsPassedInstance_Then_ProvidedOptionsAreUsed()
+        {
+            var book1 = new Book() { Title = "The Mythical Man Month", PageCount = 322 };
+            var book2 = new Book() { Title = "What it is to be a \"coder\"", PageCount = 0 };
+            var books = new List<Book> { book1, book2 };
+
+            var options = new EnumerableExtension.Options() { FileDownloadName = "library.csv" };
+
+            books.ToFileStreamResult(options);
+        }
     }
 }
