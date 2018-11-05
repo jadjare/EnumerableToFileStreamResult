@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using EnumerableToFileStreamTests.Fakes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ToFileStreamResultExtensions;
+using ToFileStreamResult;
+using ToFileStreamResultTests.Fakes;
 
-namespace ToFileStreamResultExtensionTests
+namespace ToFileStreamResultTests
 {
     [TestClass]
-    public class EnumerableToFileStreamResultExtensionShould
+    public class EnumerableExtensionShould
     {
         [TestMethod]
         public void Given_EmptyList_When_NoOptionsSet_Then_ReturnsJustPropertyNamesAsHeaders()
@@ -233,5 +233,6 @@ namespace ToFileStreamResultExtensionTests
             Assert.AreEqual(expectedTitle2, actualLineData2.First());
             Assert.AreEqual(expectedPageCount2, actualLineData2.Last());
         }
+
     }
 }

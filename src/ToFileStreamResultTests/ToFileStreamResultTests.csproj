@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ToFileStreamResultExtensions\ToFileStreamResultExtensions.csproj" />
+    <ProjectReference Include="..\ToFileStreamResult\ToFileStreamResult.csproj" />
   </ItemGroup>
 
 </Project>

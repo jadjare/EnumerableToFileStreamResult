@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToFileStreamResultExtensions", "ToFileStreamResultExtensions\ToFileStreamResultExtensions.csproj", "{70B75290-314B-4450-B999-84347025D828}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToFileStreamResult", "ToFileStreamResult\ToFileStreamResult.csproj", "{70B75290-314B-4450-B999-84347025D828}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToFileStreamResultExtensionTests", "ToFileStreamResultExtensionTests\ToFileStreamResultExtensionTests.csproj", "{8D045966-A998-4160-A10B-D60BCCF4A05E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToFileStreamResultTests", "ToFileStreamResultTests\ToFileStreamResultTests.csproj", "{8D045966-A998-4160-A10B-D60BCCF4A05E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

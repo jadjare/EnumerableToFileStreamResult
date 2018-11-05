@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace EnumerableToFileStreamTests.Fakes
+namespace ToFileStreamResultTests.Fakes
 {
     public class PersonWithPrivateData
     {

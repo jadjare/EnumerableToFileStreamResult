@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace EnumerableToFileStreamTests.Fakes
+﻿namespace ToFileStreamResultTests.Fakes
 {
     public class Book
     {

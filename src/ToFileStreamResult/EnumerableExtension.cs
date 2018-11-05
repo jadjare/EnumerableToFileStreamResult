@@ -5,24 +5,24 @@ using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ToFileStreamResultExtensions
+namespace ToFileStreamResult
 {
-    public static class EnumerableToFileStreamResultExtension
+    public static class EnumerableExtension
     {
         public static FileStreamResult ToFileStreamResult<T>(this IEnumerable<T> instance) =>
-            instance.ToFileStreamResult(options: AsFileStreamResultOptions.UseStandard());
+            instance.ToFileStreamResult(options: Options.UseStandard());
 
-        public static FileStreamResult ToFileStreamResult<T>(this IEnumerable<T> instance, Action<AsFileStreamResultOptions> config)
+        public static FileStreamResult ToFileStreamResult<T>(this IEnumerable<T> instance, Action<Options> config)
         {
-            var options = AsFileStreamResultOptions.UseStandard();
+            var options = Options.UseStandard();
             config?.Invoke(options);
 
             return instance.ToFileStreamResult(options);
         }
 
-        public static FileStreamResult ToFileStreamResult<T>(this IEnumerable<T> data, AsFileStreamResultOptions options)
+        public static FileStreamResult ToFileStreamResult<T>(this IEnumerable<T> data, Options options)
         {
-            if (options == null) options = AsFileStreamResultOptions.UseStandard();
+            if (options == null) options = Options.UseStandard();
 
             var memoryStream = new MemoryStream();
 
@@ -41,7 +41,7 @@ namespace ToFileStreamResultExtensions
             };
         }
 
-        private static void WriteFileHeader(MemoryStream memoryStream, IEnumerable<string> headerNames, AsFileStreamResultOptions options)
+        private static void WriteFileHeader(MemoryStream memoryStream, IEnumerable<string> headerNames, Options options)
         {
             foreach(var headerName in headerNames)
             {
@@ -54,7 +54,7 @@ namespace ToFileStreamResultExtensions
             }
         }
 
-        private static void WriteFileContents<T>(MemoryStream memoryStream, IEnumerable<T> data, AsFileStreamResultOptions options)
+        private static void WriteFileContents<T>(MemoryStream memoryStream, IEnumerable<T> data, Options options)
         {
             var endOfLineBytes = Encoding.UTF8.GetBytes(options.EndOfLine);
             var delimiterBytes = Encoding.UTF8.GetBytes(options.Delimiter);
@@ -81,9 +81,9 @@ namespace ToFileStreamResultExtensions
             }
         }
 
-        public class AsFileStreamResultOptions
+        public class Options
         {
-            public static AsFileStreamResultOptions UseStandard() => new AsFileStreamResultOptions
+            public static Options UseStandard() => new Options
             {
                 ContentType = "application/octet-stream",
                 Delimiter = ",",
