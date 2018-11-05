@@ -1,8 +1,8 @@
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ToFileStreamResult;
 using ToFileStreamResultTests.Fakes;
 
@@ -242,7 +242,14 @@ namespace ToFileStreamResultTests
             var book2 = new Book() { Title = "What it is to be a \"coder\"", PageCount = 0 };
             var books = new List<Book> { book1, book2 };
 
-            var options = new EnumerableExtension.Options() { FileDownloadName = "library.csv" };
+            var options = new EnumerableExtension.Options()
+            {
+                Delimiter = ",",
+                EndOfLine = "\r\n",
+                FileDownloadName = "library.csv",
+                UsePropertyNamesAsHeaders = true,
+                UseQuotedIdentifiers = true
+            };
 
             books.ToFileStreamResult(options);
         }

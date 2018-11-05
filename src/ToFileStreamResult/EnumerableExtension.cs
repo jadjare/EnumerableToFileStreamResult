@@ -81,6 +81,10 @@ namespace ToFileStreamResult
 
         public class Options
         {
+            private string _delimiter = "";
+            private string _endOfLine = "";
+            private string _contentType = "application/octet-stream";
+
             public static Options UseStandard() => new Options
             {
                 ContentType = "application/octet-stream",
@@ -90,11 +94,32 @@ namespace ToFileStreamResult
                 FileDownloadName = ""
             };
 
-            public string ContentType { get; set; } = "";
-            public string Delimiter { get; set; } = "";
-            public string FileDownloadName { get; set; } = "";
+            public string ContentType
+            {
+                get => _contentType;
+                set
+                {
+                    if(value.Split("/").Length!=2) throw new ArgumentNullException(nameof(ContentType), "Content type should be a 2 part identifier, separated by a / character, e.g. 'ApplicationException/octet-Stream'. These are also known as a MIME Type or Media Type");
+                    _contentType = value;
+                }
+            }
+
+            public string Delimiter
+            {
+                get => _delimiter;
+                set => _delimiter = value ?? throw new ArgumentNullException(nameof(Delimiter));
+            }
+
+            public string EndOfLine
+            {
+                get => _endOfLine;
+                set => _endOfLine = value ?? throw new ArgumentNullException(nameof(EndOfLine));
+            }
+
+            public string FileDownloadName { get; set; }
             public bool UsePropertyNamesAsHeaders { get; set; }
-            public string EndOfLine { get; set; } = "";
+
+
             public bool UseQuotedIdentifiers { get; set; }
         }
     }
