@@ -21,7 +21,7 @@ Once referenced you can follow one of the below examples to get started.
 public IActionResult Get()
 {
   var book1 = new Book() { Title = "The Mythical Man Month", PageCount = 322 };
-  var book2 = new Book() { Title = "What it is to be a \"coder\"", PageCount = 0 };
+  var book2 = new Book() { Title = "What it is to be a 'coder'", PageCount = 0 };
   var books = new List<Book> { book1, book2};
 
   return books.ToFileStreamResult();
