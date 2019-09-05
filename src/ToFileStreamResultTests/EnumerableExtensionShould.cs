@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Text;
 using ToFileStreamResult;
@@ -22,7 +23,7 @@ namespace ToFileStreamResultTests
 
             //ASSERT
             var actualBytes = new Byte[result.FileStream.Length];
-            result.FileStream.Read(actualBytes);
+            result.FileStream.Read(actualBytes, 0, actualBytes.Length);
 
             var actualLines = Encoding.UTF8.GetString(actualBytes).Split("\r\n");
 
@@ -31,7 +32,7 @@ namespace ToFileStreamResultTests
             {
                 Assert.IsTrue(actualLines.First().Split(",").Contains(propertyInfo.Name));
             }
-            
+
         }
 
         [TestMethod]
@@ -41,7 +42,7 @@ namespace ToFileStreamResultTests
             var emptyPeople = new List<Person>();
 
             //ACT
-            var result = emptyPeople.ToFileStreamResult(options => options.UsePropertyNamesAsHeaders=false);
+            var result = emptyPeople.ToFileStreamResult(options => options.UsePropertyNamesAsHeaders = false);
 
             //ASSERT
             Assert.AreEqual(0, result.FileStream.Length, "The file should be empty");
@@ -58,7 +59,7 @@ namespace ToFileStreamResultTests
 
             //ASSERT
             var actualBytes = new Byte[result.FileStream.Length];
-            result.FileStream.Read(actualBytes);
+            result.FileStream.Read(actualBytes, 0, actualBytes.Length);
 
             var actualLines = Encoding.UTF8.GetString(actualBytes).Split("\r\n");
 
@@ -71,14 +72,14 @@ namespace ToFileStreamResultTests
             //ARRANGE
             const string expectedTitle = "The Mythical Man Month";
             const int expectedPageCount = 322;
-            var books = new List<Book> { new Book(){Title=expectedTitle, PageCount = expectedPageCount} };
+            var books = new List<Book> { new Book() { Title = expectedTitle, PageCount = expectedPageCount } };
 
             //ACT
             var result = books.ToFileStreamResult(options => options.UsePropertyNamesAsHeaders = false);
 
             //ASSERT
             var actualBytes = new Byte[result.FileStream.Length];
-            result.FileStream.Read(actualBytes);
+            result.FileStream.Read(actualBytes, 0, actualBytes.Length);
 
             var actualLines = Encoding.UTF8.GetString(actualBytes).Split("\r\n");
             var actualLineData = actualLines.First().Split(",");
@@ -86,6 +87,29 @@ namespace ToFileStreamResultTests
             Assert.AreEqual(expectedTitle, actualLineData.First());
             Assert.AreEqual(expectedPageCount.ToString(), actualLineData.Last());
         }
+
+        [TestMethod]
+        public void Given_PropertyWithANullValue_When_OutputToFileStream_Then_NullIsReturnedAsEmptyString()
+        {
+            //ARRANGE
+            const string expectedTitle = "";
+            const int expectedPageCount = 322;
+            var books = new List<Book> { new Book() { Title = null, PageCount = expectedPageCount } };
+
+            //ACT
+            var result = books.ToFileStreamResult(options => options.UsePropertyNamesAsHeaders = false);
+
+            //ASSERT
+            var actualBytes = new Byte[result.FileStream.Length];
+            result.FileStream.Read(actualBytes, 0, actualBytes.Length);
+
+            var actualLines = Encoding.UTF8.GetString(actualBytes).Split("\r\n");
+            var actualLineData = actualLines.First().Split(",");
+            Assert.AreEqual(2, actualLineData.Length);
+            Assert.AreEqual(expectedTitle, actualLineData.First());
+            Assert.AreEqual(expectedPageCount.ToString(), actualLineData.Last());
+        }
+
 
         [TestMethod]
         public void Given_ClassWithNonPublicMembers_When_OutputToFileStream_Then_OnlyPublicPropertiesAreOutput()
@@ -98,7 +122,7 @@ namespace ToFileStreamResultTests
 
             //ASSERT
             var actualBytes = new Byte[result.FileStream.Length];
-            result.FileStream.Read(actualBytes);
+            result.FileStream.Read(actualBytes, 0, actualBytes.Length);
 
             var actualLines = Encoding.UTF8.GetString(actualBytes).Split("\r\n");
             for (var i = 0; i < actualLines.Length; i++)
@@ -109,7 +133,7 @@ namespace ToFileStreamResultTests
                 Assert.IsTrue(actualLineData.Contains(peopleWithPrivateData[i].Surname));
                 Assert.IsTrue(actualLineData.Contains(peopleWithPrivateData[i].Height.ToString()));
             }
-            
+
         }
 
         [DataTestMethod]
@@ -129,10 +153,10 @@ namespace ToFileStreamResultTests
 
             //ASSERT
             var actualBytes = new Byte[result.FileStream.Length];
-            result.FileStream.Read(actualBytes);
+            result.FileStream.Read(actualBytes, 0, actualBytes.Length);
 
             var actualLines = Encoding.UTF8.GetString(actualBytes).Split("\r\n");
-            Assert.AreEqual(peopleWithPrivateData.Count , actualLines.Length);
+            Assert.AreEqual(peopleWithPrivateData.Count, actualLines.Length);
 
             for (var i = 0; i < actualLines.Length; i++)
             {
@@ -161,7 +185,7 @@ namespace ToFileStreamResultTests
 
             //ASSERT
             var actualBytes = new Byte[result.FileStream.Length];
-            result.FileStream.Read(actualBytes);
+            result.FileStream.Read(actualBytes, 0, actualBytes.Length);
 
             var actualLines = Encoding.UTF8.GetString(actualBytes).Split(expectedEndOfLine);
             Assert.AreEqual(peopleWithPrivateData.Count, actualLines.Length);
@@ -208,7 +232,7 @@ namespace ToFileStreamResultTests
             var expectedTitle2 = "\"What it is to be a \"\"coder\"\"\"";
             var expectedPageCount2 = $"\"{book2.PageCount}\"";
 
-            var books = new List<Book> { book1, book2};
+            var books = new List<Book> { book1, book2 };
 
             //ACT
             var result = books.ToFileStreamResult(options =>
@@ -219,7 +243,7 @@ namespace ToFileStreamResultTests
 
             //ASSERT
             var actualBytes = new Byte[result.FileStream.Length];
-            result.FileStream.Read(actualBytes);
+            result.FileStream.Read(actualBytes, 0, actualBytes.Length);
 
             var actualLines = Encoding.UTF8.GetString(actualBytes).Split("\r\n");
 
@@ -252,6 +276,102 @@ namespace ToFileStreamResultTests
             };
 
             books.ToFileStreamResult(options);
+        }
+
+        [TestMethod]
+        public void
+            Given_HeadersUsingPascalCasedPropertyNames_When_AddSpaceBetweenWordsIsEnabled_Then_PropertyNamesAreSpaced()
+        {
+            //ARRANGE
+            var data = new List<Book>();
+
+            //ACT
+            var actuals = data.ToFileStreamResult(options => {
+                options.UsePropertyNamesAsHeaders = true;
+                options.AddSpacesToPropertyNameBasedHeaders = true;
+            });
+
+            //ASSERT
+
+            var actualBytes = new Byte[actuals.FileStream.Length];
+            actuals.FileStream.Read(actualBytes, 0, actualBytes.Length);
+
+            var headerRow = Encoding.UTF8.GetString(actualBytes).Split("\r\n")[0].Split(",");
+
+            Assert.IsTrue(headerRow.Contains("Title"));
+            Assert.IsTrue(headerRow.Contains("Page Count"));
+        }
+
+        [TestMethod]
+        public void Given_ListOfExpandoObjects_When_ConvertedToFileStream_Then_ExpandoObjectsKeyValuePairsAreOutput()
+        {
+            dynamic d = new ExpandoObject();
+            d.ColumnA = "Egg";
+
+            var data = new List<ExpandoObject> { d };
+
+            var actuals = data.ToFileStreamResult();
+
+
+            var actualBytes = new Byte[actuals.FileStream.Length];
+            actuals.FileStream.Read(actualBytes, 0, actualBytes.Length);
+
+            var actualLines = Encoding.UTF8.GetString(actualBytes).Split("\r\n");
+            var headerRow = actualLines.First().Split(",");
+            var dataRow = actualLines.Skip(1).First().Split(",");
+
+            Assert.IsTrue(headerRow.First() == "ColumnA");
+            Assert.IsTrue(dataRow.First() == "Egg");
+        }
+
+
+        [TestMethod]
+        public void Given_ListOfDictionaryObjects_When_ConvertedToFileStream_Then_DictionaryObjectsKeyValuePairsAreOutput()
+        {
+            var row1 = new Dictionary<string, object>();
+            row1.Add("ColumnA", "Egg");
+            row1.Add("ColumnB", "Bacon");
+
+            var data = new List<Dictionary<string, object>>();
+            data.Add(row1);
+
+            var actuals = data.ToFileStreamResult();
+
+            var actualBytes = new Byte[actuals.FileStream.Length];
+            actuals.FileStream.Read(actualBytes, 0, actualBytes.Length);
+
+            var actualLines = Encoding.UTF8.GetString(actualBytes).Split("\r\n");
+            var headerRow = actualLines.First().Split(",");
+            var dataRow = actualLines.Skip(1).First().Split(",");
+
+            Assert.IsTrue(headerRow.First() == "ColumnA");
+            Assert.IsTrue(dataRow.First() == "Egg");
+        }
+
+        [TestMethod]
+        public void Given_ListOfKeyValuePairs_When_ConvertedToFileStream_Then_KeyValuePairsAreOutput()
+        {
+            KeyValuePair<string, object> row1ColumnA = new KeyValuePair<string, object>("ColumnA", "Egg");
+            KeyValuePair<string, object> row1ColumnB = new KeyValuePair<string, object>("ColumnB", "Bacon");
+
+            var row1 = new List<KeyValuePair<string, object>>();
+            row1.Add(row1ColumnA);
+            row1.Add(row1ColumnB);
+
+            var data = new List<List<KeyValuePair<string, object>>>();
+            data.Add(row1);
+
+            var actuals = data.ToFileStreamResult();
+
+            var actualBytes = new Byte[actuals.FileStream.Length];
+            actuals.FileStream.Read(actualBytes, 0, actualBytes.Length);
+
+            var actualLines = Encoding.UTF8.GetString(actualBytes).Split("\r\n");
+            var headerRow = actualLines.First().Split(",");
+            var dataRow = actualLines.Skip(1).First().Split(",");
+
+            Assert.IsTrue(headerRow.First() == "ColumnA");
+            Assert.IsTrue(dataRow.First() == "Egg");
         }
     }
 }
