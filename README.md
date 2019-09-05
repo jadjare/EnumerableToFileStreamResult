@@ -39,6 +39,19 @@ public IActionResult Get()
 }
 ```
 
+### A Dapper example using Dynamics
+```
+[HttpGet]
+public IActionResult Get()
+{
+  var orderDetails = connection.Query<dynamic>(SELECT TOP 5 * FROM OrderDetails;).ToList();
+  
+  var orderData = orderDetails.Select(row => row as IDictionary<string, object>); //Cast DapperRow objects to Dictionary objects
+  
+  return orderData.ToFileStreamResult();
+}
+```
+
 ### Using Options - Style 1
 ```
 [HttpGet]
